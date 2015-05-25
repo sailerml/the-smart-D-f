@@ -1,0 +1,165 @@
+
+<html>
+  <head>
+    <title></title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+         *{
+          margin: 0;
+         }
+      #box{
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        left: 10px;
+        right: 10px;
+        background-color:pink ;
+      }
+
+    </style>
+    <script type="text/javascript">
+
+
+window.onload=function  () {
+       var eventUtil = {
+      //添加事件
+       addEvent: function(element,type,fn){
+          if(element.addEventListener){
+            element.addEventListener(type,fn,false)
+          }else if(element.attachEvent){
+            element.attachEvent("on"+type,fn)
+          }else{
+            element["on"+type]=fn;
+          }
+        },
+        //阻止默认事件（本身）
+        preventDefault: function(event){
+          if(event.preventDefault){
+            event.preventDefault();
+          }else{
+            event.returnValue=false;
+          }
+        },
+        //获取事件对象
+        getEvent: function(event){
+           return event || window.event;
+        },
+        //获取目标元素
+        getTarget: function(event){
+          return event.target || event.srcElement;
+        },
+        getX:function  (event) {
+  return event.pageX?event.pageX:event.x;
+},
+getY:function (event) {
+  return event.pageY?event.pageY:event.y;
+},
+        //移除事件
+        removeEvent: function(element,type,fn){
+          if(element.removeEventListener){
+            element.removeEventListener(type,fn,false);
+          }else if(element.detachEvent){
+            element.detachEvent("on"+type,fn)
+          }else{
+            element["on"+type]=null;
+          }
+        },
+        preventDefault:function  (event) {
+  if (event.preventDefault) {
+    event.preventDefault();
+  }
+  else{
+    event.returnValue=false;
+  }
+
+},
+//移除事件
+removeHandler:function(element,type,handler){
+if(element.removeEventListener){
+element.removeEventListener(type,handler,false);
+}
+else if(element.detachEvent){
+element.detachEvent("on"+type,handler);
+}
+else{
+element["on"+type]=null;
+}
+},
+//阻止冒泡
+stopPropagation:function  (event) {
+  if (event.stopPropagation) {
+    event.stopPropagation();
+  }
+  else{
+    event.cancelBubble=true;
+  }
+}
+}
+   var dragger;
+       var drag = function (event){
+         var target;
+         event = eventUtil.getEvent(event);
+          switch(event.type){
+            case "mousedown": 
+                 target = eventUtil.getTarget(event);
+                 dragger=target;
+                 disX =  eventUtil.getX(event)-target.offsetLeft;
+                     disY = eventUtil.getY(event)-target.offsetTop;
+                 break;
+            case "mousemove":
+
+              if(dragger!=undefined){
+                var l=eventUtil.getX(event) - disX;
+                var t=eventUtil.getY(event) - disY;
+                var winW=document.documentElement.clientWidth||document.body.clientWidth;
+                var winH=document.documentElement.clientHeight||document.body.clientHeight;
+                var maxLeft=winW-box.offsetWidth;
+                var maxTop=winH-box.offsetHeight;
+
+    if (l>=maxLeft) {
+            l=maxLeft;
+          };
+          if(l<=0){
+          
+            l=0;
+
+          };
+          if(t>=maxTop){
+          
+           t=maxTop;
+          };
+          if(t<=0){
+           t=0;
+
+          };
+                 dragger.style.left =l;
+                 dragger.style.top =t;
+              };break;
+            case "mouseup":
+              dragger = undefined;
+              //stopPropagation(event);
+              break;
+          }
+       }
+       //启动拖动函数
+       var dragStart = function (element){
+       eventUtil.addEvent(element,"mousedown",drag)
+       eventUtil.addEvent(element,"mousemove",drag)
+       eventUtil.addEvent(document,"mouseup",drag)
+     }
+     var div = document.getElementById("box");
+  
+     dragStart(div);
+}
+     
+    
+
+  </script>
+  </head>
+  <body>
+    <div id="box">
+    </div>
+  
+  </body>
+
+<ml>
